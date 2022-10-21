@@ -1,25 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import LandingPage from "./components/LandingPage/LandingPage";
+import LoginPage from "./components/LoginPage/LoginPage";
+import SignUpPage from "./components/LoginPage/SignUpPage";
+import ChatPage from "./components/ChatPage/ChatPage";
+import ChatroomPage from "./components/ChatPage/ChatroomPage";
+import Menubar from "./components/Menubar";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Menubar />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signUp" element={<SignUpPage />} />
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/chatroom" element={<ChatroomPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
