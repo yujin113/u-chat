@@ -13,7 +13,7 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(signalingSocketHandler(), "/ws").setAllowedOrigins("*");
+        registry.addHandler(signalingSocketHandler(), "/chat/{roomId}").setAllowedOrigins("*");
     }
 
     @Bean
