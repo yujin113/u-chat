@@ -3,13 +3,13 @@ import { Link, useLocation } from "react-router-dom";
 import { UrlContext } from "../../App";
 import axios from "axios";
 
-type DataType = {
+type Room = {
   roomId: number;
   name: string;
 };
 
 export default function ChatroomPage() {
-  const [rooms, setRooms] = useState<DataType[]>([]);
+  const [rooms, setRooms] = useState<Room[]>([]);
   const [isLogin, setLogin] = useState<string | null>(null);
   const username = localStorage.getItem("username");
 
@@ -98,18 +98,6 @@ export default function ChatroomPage() {
                       {room.name}
                     </li>
                   </Link>
-
-                  // getRoomInfo({id: room.roomId, name: room.name});
-                  // <Link
-                  //   to={`/enterRoom`}
-                  //   state={{ name: room.name, id: room.roomId }}
-                  // >
-                  //   <li
-                  //     className="px-4 py-4 bg-white hover:bg-indigo-100 hover:text-indigo-900 border-b border-gray-200 cursor-pointer transition-all duration-300 ease-in-out"
-                  //   >
-                  //     {room.name}
-                  //   </li>
-                  // </Link>
                 )
               )
             : rooms.map((room, index) => (
