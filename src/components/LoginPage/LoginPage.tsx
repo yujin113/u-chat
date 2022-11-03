@@ -1,8 +1,60 @@
-import React from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { LockClosedIcon } from "@heroicons/react/20/solid";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { UrlContext } from "../../App";
 
 function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [code, setCode] = useState<string | null>(null);
+
+  const baseUrl = useContext(UrlContext);
+  const navigate = useNavigate();
+
+  const login = async () => {
+    await axios
+      .post(
+        baseUrl + "/api/user/login",
+        {
+          email: email,
+          password: password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json; charset=UTF-8",
+          },
+        }
+      )
+      .then((response) => {
+        // console.log(response.data);
+        if (response.data.code == 1000) {
+          setCode("유저를 찾을 수 없습니다.");
+        } else if (response.data.code == 10030) {
+          setCode("잘못된 비밀번호입니다.");
+        } else {
+          localStorage.setItem("userId", response.data.data.userId);
+          localStorage.setItem("username", response.data.data.userName);
+          localStorage.setItem(
+            "rooms",
+            JSON.stringify(response.data.data.rooms)
+          );
+          navigate("/");
+          window.location.reload();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const onEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+  const onPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
   return (
     <>
       <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -12,7 +64,7 @@ function LoginPage() {
               로그인하기
             </h2>
           </div>
-          <form className="mt-8 space-y-6" action="#" method="POST">
+          <div className="mt-8 space-y-6">
             <input type="hidden" name="remember" defaultValue="true" />
             <div className="-space-y-px rounded-md shadow-sm">
               <div>
@@ -27,6 +79,8 @@ function LoginPage() {
                   required
                   className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-3 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   placeholder="이메일"
+                  onChange={onEmailChange}
+                  value={email}
                 />
               </div>
               <div>
@@ -41,39 +95,16 @@ function LoginPage() {
                   required
                   className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-3 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   placeholder="비밀번호"
+                  onChange={onPasswordChange}
+                  value={password}
                 />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              {/* <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                />
-                <label
-                  htmlFor="remember-me"
-                  className="ml-2 block text-sm text-gray-900"
-                >
-                  Remember me
-                </label>
-              </div> */}
-
-              <div className="text-sm">
-                <a
-                  href="#"
-                  className="font-medium text-indigo-600 hover:text-indigo-500"
-                >
-                  <Link to="/signup">계정이 없으신가요?</Link>
-                </a>
               </div>
             </div>
 
             <div>
               <button
                 type="submit"
+                onClick={login}
                 className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -85,7 +116,21 @@ function LoginPage() {
                 로그인
               </button>
             </div>
-          </form>
+
+            <div className="flex items-center justify-between">
+              <div className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                <Link to="/signup">계정이 없으신가요?</Link>
+              </div>
+            </div>
+
+            {code == null ? (
+              <></>
+            ) : (
+              <div className="flex items-center justify-between">
+                <div className="text-sm font-medium text-red-600">{code}</div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
