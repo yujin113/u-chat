@@ -9,6 +9,7 @@ import Menubar from "./components/Menubar";
 import AddRoomPage from "./components/ChatPage/AddRoomPage";
 import EnterRoomModal from "./components/ChatPage/EnterRoomModal";
 import AboutPage from "./components/AboutPage";
+import MyChatPage from "./components/ChatPage/MyChatPage";
 
 export const UrlContext = createContext("");
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="/signUp" element={<SignUpPage />} />
           <Route path="/chat/:roomId" element={<ChatPage />} />
           <Route path="/chatroom" element={<ChatroomPage />} />
+          <Route path="/mychat" element={<MyChatPage />} />
           <Route path="/addroom" element={<AddRoomPage />} />
           <Route path="/enterRoom" element={<EnterRoomModal />} />
           <Route path="/about" element={<AboutPage />} />
