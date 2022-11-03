@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Menubar() {
-  const [isLogin, setLogin] = useState<string | null>(null);
+  const [isLogin, setLogin] = useState<string | null>(
+    localStorage.getItem("userId")
+  );
   const username = localStorage.getItem("username");
+  const [click, setClick] = useState(0);
 
   const logout = () => {
     localStorage.removeItem("userId");
@@ -12,15 +15,27 @@ export default function Menubar() {
     window.location.reload();
   };
 
+  const location = useLocation();
   useEffect(() => {
-    setLogin(localStorage.getItem("userId"));
-  }, []);
+    if (location.pathname == "/") {
+      setClick(0);
+    } else if (location.pathname == "/mychat") {
+      setClick(1);
+    } else if (location.pathname == "/about") {
+      setClick(2);
+    } else {
+      setClick(-1);
+    }
+  });
 
   return (
     <nav className="bg-gray-200 shadow shadow-gray-300 w-100 px-8 md:px-auto">
       <div className="md:h-16 h-28 mx-auto md:px-4 container flex items-center justify-between flex-wrap md:flex-nowrap">
         <Link to="/">
-          <div className="px-16 flex text-indigo-500 md:order-1">
+          <div
+            className="px-16 flex text-indigo-500 md:order-1"
+            onClick={() => setClick(0)}
+          >
             <div className="px-1 py-2 text-lg font-bold">유챗</div>
             <svg
               className="h-10 w-10"
@@ -40,17 +55,50 @@ export default function Menubar() {
         </Link>
         <div className="text-gray-500 order-3 w-full md:w-auto md:order-2">
           <ul className="flex font-semibold justify-between">
-            <Link to="/">
-              <li className="md:px-4 md:py-2 text-indigo-500">Chat List</li>
-            </Link>
-            <Link to="/">
-              <li className="md:px-4 md:py-2 hover:text-indigo-400">My Chat</li>
-            </Link>
-            <Link to="/about">
-              <li className="md:px-4 md:py-2 hover:text-indigo-400">
-                <a href="#">About</a>
-              </li>
-            </Link>
+            {click == 0 ? (
+              <Link to="/">
+                <li className="md:px-4 md:py-2 text-indigo-500">Chat List</li>
+              </Link>
+            ) : (
+              <Link to="/">
+                <li
+                  className="md:px-4 md:py-2 hover:text-indigo-400"
+                  onClick={() => setClick(0)}
+                >
+                  Chat List
+                </li>
+              </Link>
+            )}
+            {click == 1 ? (
+              <Link to="/mychat">
+                <li className="md:px-4 md:py-2 text-indigo-500">My Chat</li>
+              </Link>
+            ) : (
+              <Link to="/mychat">
+                <li
+                  className="md:px-4 md:py-2 hover:text-indigo-400"
+                  onClick={() => setClick(1)}
+                >
+                  My Chat
+                </li>
+              </Link>
+            )}
+            {click == 2 ? (
+              <Link to="/about">
+                <li className="md:px-4 md:py-2 text-indigo-500">
+                  <a href="#">About</a>
+                </li>
+              </Link>
+            ) : (
+              <Link to="/about">
+                <li
+                  className="md:px-4 md:py-2 hover:text-indigo-400"
+                  onClick={() => setClick(2)}
+                >
+                  <a href="#">About</a>
+                </li>
+              </Link>
+            )}
           </ul>
         </div>
         <div className="order-2 md:order-3">
