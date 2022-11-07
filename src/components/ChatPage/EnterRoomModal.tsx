@@ -20,14 +20,22 @@ export default function EnterRoomModal() {
   const baseUrl = useContext(UrlContext);
   const navigate = useNavigate();
 
-  const enterRoom = () => {
-    axios
+  const [save, setSave] = useState(false);
+  const enterRoom = async () => {
+    await axios
       .post(baseUrl + `/api/chatroom/enter/${room.id}/${userId}`)
       .then((response) => {
         if (response.data.code == 200) {
           var rooms = JSON.parse(localStorage.getItem("rooms") || "[]");
           rooms.push(room.id);
           localStorage.setItem("rooms", JSON.stringify(rooms));
+          setSave(true);
+          navigate(`/chat/${room.id}`, {
+            state: {
+              id: room.id,
+              name: room.name,
+            },
+          });
         }
         if (response.data.code == 10020) {
           alert("이미 입장한 방입니다.");
@@ -95,21 +103,13 @@ export default function EnterRoomModal() {
                 취소
               </button>
 
-              <Link
-                to={`/chat/${room.id}`}
-                state={{
-                  name: room.name,
-                  id: room.id
-                }}
+              <button
+                className="bg-indigo-400 text-white font-bold uppercase text-m px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                type="button"
+                onClick={enterRoom}
               >
-                <button
-                  className="bg-indigo-400 text-white font-bold uppercase text-m px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                  type="button"
-                  onClick={enterRoom}
-                >
-                  입장하기
-                </button>
-              </Link>
+                입장하기
+              </button>
             </div>
           </div>
         </div>

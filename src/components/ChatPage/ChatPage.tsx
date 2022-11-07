@@ -56,18 +56,14 @@ export default function ChatPage() {
         var rooms = JSON.parse(localStorage.getItem("rooms") || "[]");
         rooms.splice(rooms.indexOf(room.id), 1);
         localStorage.setItem("rooms", JSON.stringify(rooms));
-        navigate("/")
+        navigate("/");
       });
   };
 
   useEffect(() => {
     getRoomInfo();
     getMessageInfo();
-    // window.location.reload();
-  }, []);
-
-  // useEffect(getRoomInfo, []);
-  // useEffect(getMessageInfo, []);
+  }, [room]);
 
   return (
     <div className="flex px-4 h-screen antialiased text-gray-800">
