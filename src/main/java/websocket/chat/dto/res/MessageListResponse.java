@@ -4,6 +4,6 @@ import lombok.Data;
 import websocket.chat.dto.BaseResponse;
 
 @Data
-public class SaveRoomResponse extends BaseResponse {
-    Long roomId;
+public class MessageListResponse extends BaseResponse {
+    MessageListResponseDto data;
 }
