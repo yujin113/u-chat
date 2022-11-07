@@ -53,7 +53,7 @@ public class UserService {
             return res;
         }
 
-        List<Long> rooms = userRoomRepository.getMyRoom(user);
+        List<Long> rooms = userRoomRepository.getMyRoomId(user);
         Collections.sort(rooms);
 
         res.setData(LoginResponseDto.of(user.getUserId(), user.getUsername(), rooms));
