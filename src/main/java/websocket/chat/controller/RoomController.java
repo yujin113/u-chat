@@ -42,4 +42,9 @@ public class RoomController {
     LeaveRoomResponse leaveRoom(@PathVariable Long roomId, @PathVariable Long userId) {
         return roomService.leaveRoom(roomId, userId);
     }
+
+    @GetMapping("/myroom/{userId}")
+    GetMyRoomResponse getMyRoom(@PathVariable Long userId) {
+        return roomService.getMyRoom(userId);
+    }
 }

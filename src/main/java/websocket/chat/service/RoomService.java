@@ -168,4 +168,22 @@ public class RoomService {
         res.setCode(ResultCode.Success);
         return res;
     }
+
+    public GetMyRoomResponse getMyRoom(Long userId) {
+        GetMyRoomResponse res = new GetMyRoomResponse();
+
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            res.setCode(ResultCode.NotFoundUser);
+            return res;
+        }
+        User user = userOptional.get();
+
+        List<RoomList> roomList = userRoomRepository.getMyRoom(user).stream().map(RoomList::new).collect(Collectors.toList());
+
+        res.setData(GetMyRoomResponseDto.of(roomList));
+
+        res.setCode(ResultCode.Success);
+        return res;
+    }
 }

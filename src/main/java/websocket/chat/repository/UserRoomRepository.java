@@ -18,5 +18,8 @@ public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
     UserRoom getUserRoomByUserAndRoom(User user, Room room);
 
     @Query("select ur.room.roomId from UserRoom ur where ur.user=?1")
-    List<Long> getMyRoom(User user);
+    List<Long> getMyRoomId(User user);
+
+    @Query("select ur.room from UserRoom ur where ur.user=?1 order by ur.userRoomId desc")
+    List<Room> getMyRoom(User user);
 }
