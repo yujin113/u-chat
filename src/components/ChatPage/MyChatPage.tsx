@@ -1,5 +1,7 @@
-import react, { useEffect, useState } from "react";
+import axios from "axios";
+import react, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { UrlContext } from "../../App";
 
 type Room = {
   roomId: number;
@@ -11,13 +13,24 @@ export default function MyChatPage() {
   const [isLogin, setLogin] = useState<string | null>(
     localStorage.getItem("userId")
   );
+  const userId = localStorage.getItem("userId");
   const username = localStorage.getItem("username");
 
   const navigate = useNavigate();
+  const baseUrl = useContext(UrlContext);
+
+  const getMyRoom = () => {
+    axios.get(baseUrl + `/api/chatroom/myroom/${userId}`)
+    .then((response) => {
+      setRooms(response.data.data.rooms);
+    });
+  };
 
   useEffect(() => {
     if (isLogin == null) {
       navigate("/login");
+    } else {
+      getMyRoom();
     }
   }, []);
 
