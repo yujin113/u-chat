@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import websocket.chat.controller.ResultCode;
-import websocket.chat.domain.Room;
-import websocket.chat.domain.User;
-import websocket.chat.domain.UserRoom;
+import websocket.chat.domain.*;
 import websocket.chat.dto.req.SaveRoomRequestDto;
 import websocket.chat.dto.res.*;
 import websocket.chat.dto.res.MessageListResponseDto.MessageInfo;
@@ -73,7 +71,9 @@ public class RoomService {
         Room room = roomOptional.get();
         List<String> userList = userRoomRepository.getListRoomUser(room);
 
-        res.setData(RoomUserListResponseDto.of(userList.size(), userList));
+        Long creatorId = userRoomRepository.findCreatorId(room);
+
+        res.setData(RoomUserListResponseDto.of(userList.size(), creatorId, userList));
         res.setCode(ResultCode.Success);
         return res;
     }
@@ -106,9 +106,12 @@ public class RoomService {
         if (chatKeyList.size() != 0) {
             chatKey = chatKeyList.get(0);
         }
-        System.out.println(chatKey);
         UserRoom userRoom = UserRoom.createUserRoom(user, room, false, chatKey);
         userRoomRepository.save(userRoom);
+
+        String content = user.getUsername() + "님이 들어왔습니다.";
+        Message message = Message.createMessage(room, user, content, Type.ENTER);
+        messageRepository.save(message);
 
         res.setCode(ResultCode.Success);
         return res;
@@ -134,7 +137,7 @@ public class RoomService {
         Long chatKey = userRoomRepository.getUserRoomByUserAndRoom(user, room).getChatKey();
 
         List<MessageInfo> messages = messageRepository.findAllByRoom(room, chatKey).stream().map(message -> {
-            return new MessageInfo(message.getMessageId(), message.getUser().getUsername(), message.getUser().getUserId().equals(userId), message.getContent(), message.getCreatedAt());
+            return new MessageInfo(message.getMessageId(), message.getUser().getUsername(), message.getUser().getUserId().equals(userId), message.getContent(), message.getCreatedAt(), message.getType());
         }).collect(Collectors.toList());
 
         res.setData(MessageListResponseDto.of(messages));
@@ -158,6 +161,10 @@ public class RoomService {
             return res;
         }
         Room room = roomOptional.get();
+
+        String content = user.getUsername() + "님이 나갔습니다.";
+        Message message = Message.createMessage(room, user, content, Type.LEAVE);
+        messageRepository.save(message);
 
         UserRoom userRoom = userRoomRepository.getUserRoomByUserAndRoom(user, room);
         if (userRoom.isCreator()) {
