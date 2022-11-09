@@ -33,11 +33,15 @@ public class Message {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    public static Message createMessage(Room room, User user, String content) {
+    @Enumerated(EnumType.STRING)
+    private Type type;
+
+    public static Message createMessage(Room room, User user, String content, Type type) {
         Message message = new Message();
         message.room = room;
         message.user = user;
         message.content = content;
+        message.type = type;
         return message;
     }
 }
