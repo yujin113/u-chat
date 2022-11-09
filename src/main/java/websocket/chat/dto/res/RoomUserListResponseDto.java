@@ -7,14 +7,16 @@ import java.util.List;
 @Getter
 public class RoomUserListResponseDto {
     int count;
+    Long creatorId;
     List<String> users;
 
-    private RoomUserListResponseDto(int count, List<String> users) {
+    private RoomUserListResponseDto(int count, Long creatorId, List<String> users) {
         this.count = count;
+        this.creatorId = creatorId;
         this.users = users;
     }
 
-    public static RoomUserListResponseDto of(int count, List<String> users) {
-        return new RoomUserListResponseDto(count, users);
+    public static RoomUserListResponseDto of(int count, Long creatorId, List<String> users) {
+        return new RoomUserListResponseDto(count, creatorId, users);
     }
 }
