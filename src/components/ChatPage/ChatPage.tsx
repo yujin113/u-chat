@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UrlContext } from "../../App";
@@ -65,6 +65,15 @@ export default function ChatPage() {
     getMessageInfo();
   }, [room]);
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollToBottom = () => {
+    scrollRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "end"
+    });
+  };
+  useEffect(scrollToBottom);
+
   return (
     <div className="flex px-4 h-[calc(100vh-7rem)] md:h-[calc(100vh-4rem)] antialiased text-gray-800">
       <div className="flex flex-row h-full w-full overflow-x-hidden">
@@ -115,7 +124,6 @@ export default function ChatPage() {
             <div className="flex flex-col space-y-1 mt-4 -mx-2 h-100 overflow-y-auto">
               {participants.map(
                 (participant, index) =>
-                  // <button className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2">
                   index == 0 ? (
                     <div className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2">
                       <div className="flex items-center justify-center h-8 w-8 bg-orange-200 rounded-full">
@@ -135,8 +143,6 @@ export default function ChatPage() {
                       </div>
                     </div>
                   )
-
-                // </button>
               )}
             </div>
 
@@ -152,7 +158,7 @@ export default function ChatPage() {
           <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
             <div className="flex flex-col h-full overflow-x-auto mb-4">
               <div className="flex flex-col h-full">
-                <div className="grid grid-cols-12 gap-y-2">
+                <div className="grid grid-cols-12 gap-y-2"  ref={scrollRef}>
                   {messages.map((message, index) =>
                     message.type == "ENTER" || message.type == "LEAVE" ? (
                       <div className="col-start-6 col-end-13 p-3 rounded-lg">
