@@ -66,7 +66,7 @@ export default function ChatPage() {
   }, [room]);
 
   return (
-    <div className="flex px-4 h-screen antialiased text-gray-800">
+    <div className="flex px-4 h-[calc(100vh-7rem)] md:h-[calc(100vh-4rem)] antialiased text-gray-800">
       <div className="flex flex-row h-full w-full overflow-x-hidden">
         <div className="flex flex-col py-8 pl-6 pr-2 w-64 bg-white flex-shrink-0">
           <div className="flex flex-row items-center justify-center h-12 w-full">
@@ -160,8 +160,8 @@ export default function ChatPage() {
                           <div className="flex items-center justify-center h-10 w-10 rounded-full bg-blue-400 flex-shrink-0">
                             {message.username.substring(0, 1)}
                           </div>
-                          <div className="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl">
-                            <div>{message.content}</div>
+                          <div className="relative mr-3 text-sm min-w-[5rem] bg-indigo-100 py-2 px-4 shadow rounded-xl">
+                            <div className="text-center">{message.content}</div>
                             <div className="absolute text-xs bottom-0 right-0 -mb-5 mr-2 text-gray-500">
                               {message.createdAt}
                             </div>
@@ -174,8 +174,8 @@ export default function ChatPage() {
                           <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-400 flex-shrink-0">
                             {message.username.substring(0, 1)}
                           </div>
-                          <div className="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
-                            <div>{message.content}</div>
+                          <div className="relative ml-3 text-sm min-w-[5rem] bg-white py-2 px-4 shadow rounded-xl">
+                            <div className="text-center">{message.content}</div>
                             <div className="absolute text-xs bottom-0 left-0 -mb-5 mr-2 text-gray-500">
                               {message.createdAt}
                             </div>
