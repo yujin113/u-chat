@@ -10,11 +10,11 @@ interface RoomInfo {
 }
 
 type Message = {
-  messageId: number;
   username: string;
   sender: boolean;
   content: string;
   createdAt: string;
+  type: string;
 };
 
 export default function ChatPage() {
@@ -154,7 +154,11 @@ export default function ChatPage() {
               <div className="flex flex-col h-full">
                 <div className="grid grid-cols-12 gap-y-2">
                   {messages.map((message, index) =>
-                    message.sender == true ? (
+                    message.type == "ENTER" || message.type == "LEAVE" ? (
+                      <div className="col-start-6 col-end-13 p-3 rounded-lg">
+                        {message.content}
+                      </div>
+                    ) : message.sender == true ? (
                       <div className="col-start-6 col-end-13 p-3 rounded-lg">
                         <div className="flex items-center justify-start flex-row-reverse">
                           <div className="flex items-center justify-center h-10 w-10 rounded-full bg-blue-400 flex-shrink-0">
