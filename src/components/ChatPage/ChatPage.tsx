@@ -69,10 +69,26 @@ export default function ChatPage() {
   const scrollToBottom = () => {
     scrollRef.current?.scrollIntoView({
       behavior: "smooth",
-      block: "end"
+      block: "end",
     });
   };
   useEffect(scrollToBottom);
+
+  const onClickEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key == "Enter") {
+      sendMessage();
+    }
+  };
+
+  const [message, setMessage] = useState("");
+  const onMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(e.target.value);
+  };
+
+  const sendMessage = () => {
+    console.log(message);
+    (document.getElementById("msg") as HTMLInputElement).value = "";
+  };
 
   return (
     <div className="flex px-4 h-[calc(100vh-7rem)] md:h-[calc(100vh-4rem)] antialiased text-gray-800">
@@ -122,27 +138,26 @@ export default function ChatPage() {
               </span>
             </div>
             <div className="flex flex-col space-y-1 mt-4 -mx-2 h-100 overflow-y-auto">
-              {participants.map(
-                (participant, index) =>
-                  index == 0 ? (
-                    <div className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2">
-                      <div className="flex items-center justify-center h-8 w-8 bg-orange-200 rounded-full">
-                        {participant.substring(0, 1)}
-                      </div>
-                      <div className="ml-2 text-m font-semibold">
-                        {participant} (방장)
-                      </div>
+              {participants.map((participant, index) =>
+                index == 0 ? (
+                  <div className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2">
+                    <div className="flex items-center justify-center h-8 w-8 bg-orange-200 rounded-full">
+                      {participant.substring(0, 1)}
                     </div>
-                  ) : (
-                    <div className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2">
-                      <div className="flex items-center justify-center h-8 w-8 bg-pink-200 rounded-full">
-                        {participant.substring(0, 1)}
-                      </div>
-                      <div className="ml-2 text-m font-semibold">
-                        {participant}
-                      </div>
+                    <div className="ml-2 text-m font-semibold">
+                      {participant} (방장)
                     </div>
-                  )
+                  </div>
+                ) : (
+                  <div className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2">
+                    <div className="flex items-center justify-center h-8 w-8 bg-pink-200 rounded-full">
+                      {participant.substring(0, 1)}
+                    </div>
+                    <div className="ml-2 text-m font-semibold">
+                      {participant}
+                    </div>
+                  </div>
+                )
               )}
             </div>
 
@@ -158,7 +173,7 @@ export default function ChatPage() {
           <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
             <div className="flex flex-col h-full overflow-x-auto mb-4">
               <div className="flex flex-col h-full">
-                <div className="grid grid-cols-12 gap-y-2"  ref={scrollRef}>
+                <div className="grid grid-cols-12 gap-y-2" ref={scrollRef}>
                   {messages.map((message, index) =>
                     message.type == "ENTER" || message.type == "LEAVE" ? (
                       <div className="col-start-6 col-end-13 p-3 rounded-lg">
@@ -217,12 +232,14 @@ export default function ChatPage() {
                 </button>
               </div>
               <div className="flex-grow ml-4">
-                <div className="relative w-full">
+                <div className="relative w-full" onKeyDown={onClickEnter}>
                   <input
                     type="text"
+                    id="msg"
                     className="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
+                    onChange={onMessageChange}
                   />
-                  <button className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600">
+                  {/* <button className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600">
                     <svg
                       className="w-6 h-6"
                       fill="none"
@@ -237,11 +254,14 @@ export default function ChatPage() {
                         d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                       ></path>
                     </svg>
-                  </button>
+                  </button> */}
                 </div>
               </div>
               <div className="ml-4">
-                <button className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0">
+                <button
+                  className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0"
+                  onClick={sendMessage}
+                >
                   <span>Send</span>
                   <span className="ml-2">
                     <svg
