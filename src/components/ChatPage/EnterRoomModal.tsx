@@ -34,6 +34,7 @@ export default function EnterRoomModal() {
             state: {
               id: room.id,
               name: room.name,
+              isEnter: true,
             },
           });
         }

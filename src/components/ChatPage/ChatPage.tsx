@@ -3,10 +3,12 @@ import { useEffect, useState, useContext, useRef } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UrlContext } from "../../App";
+import * as StompJS from "@stomp/stompjs";
 
 interface RoomInfo {
   id: number;
   name: string;
+  isEnter: boolean;
 }
 
 type Message = {
@@ -50,6 +52,22 @@ export default function ChatPage() {
   };
 
   const leaveRoom = () => {
+    client.current.publish({
+      destination: "/pub/chat/room",
+      body: JSON.stringify({
+        roomId: room.id,
+        userId: userId,
+        sender: username,
+        content: username + "님이 나갔습니다.",
+        type: "LEAVE",
+      }),
+    });
+
+    client.current.unsubscribe(`/sub/room/${room.id}`);
+    client.current.unsubscribe(`/sub/enter/${room.id}`);
+    // client.current.onDisconnect = () => {
+    //   client.current.unsubscribe(`/sub/room/${room.id}`);
+    // };
     axios
       .get(baseUrl + `/api/chatroom/leave/${room.id}/${userId}`)
       .then((response) => {
@@ -85,9 +103,113 @@ export default function ChatPage() {
     setMessage(e.target.value);
   };
 
+  const client = useRef(
+    new StompJS.Client({
+      brokerURL: "ws://localhost:8080/ws",
+      debug: function (str) {
+        console.log(str);
+      },
+      reconnectDelay: 5000,
+      // heartbeatIncoming: 4000,
+      // heartbeatOutgoing: 4000,
+    })
+  );
+
+  client.current.onStompError = function (frame) {
+    console.log("Broker reported error: " + frame.headers["message"]);
+    console.log("Additional details: " + frame.body);
+  };
+
+  useEffect(() => {
+    if (!client.current.active) {
+      client.current.activate();
+    }
+
+    client.current.onConnect = () => {
+      client.current.subscribe(`/sub/enter/${room.id}`, (msg) => {
+        const newMsg = JSON.parse(msg.body);
+        console.log(newMsg);
+
+        const newMessage: Message = {
+          username: newMsg.sender,
+          sender: userId == newMsg.userId,
+          content: newMsg.content,
+          createdAt: "",
+          type: newMsg.type,
+        };
+        setMessages((prevState) => [...prevState, newMessage]);
+        if (newMsg.type == "ENTER") {
+          setParticipants((prevState) => [...prevState, newMsg.sender]);
+          setCount((count) => count + 1);
+        } else {
+          setParticipants((prevState) => {
+            const idx = prevState.indexOf(newMsg.sender);
+            if (idx != -1) {
+              prevState.splice(idx, 1);
+            }
+            return prevState;
+          });
+          setCount((count) => count - 1);
+        }
+      });
+
+      client.current.subscribe(`/sub/room/${room.id}`, (msg) => {
+        const newMsg = JSON.parse(msg.body);
+        console.log(newMsg.sender + " : " + newMsg.content);
+        const now = new Date();
+
+        const createdAt =
+          ("0" + (now.getMonth() + 1)).slice(-2) +
+          "/" +
+          ("0" + now.getDate()).slice(-2) +
+          " " +
+          ("0" + now.getHours()).slice(-2) +
+          ":" +
+          ("0" + now.getMinutes()).slice(-2);
+        // const receivedTime = new Date().toLocaleTimeString([], {
+        //   timeStyle: "short",
+        // });
+        const newMessage: Message = {
+          username: newMsg.sender,
+          sender: userId == newMsg.userId,
+          content: newMsg.content,
+          createdAt: createdAt,
+          type: newMsg.type,
+        };
+        setMessages((prevState) => [...prevState, newMessage]);
+      });
+
+      enterMessage();
+    };
+  }, []);
+
   const sendMessage = () => {
-    console.log(message);
     (document.getElementById("msg") as HTMLInputElement).value = "";
+    client.current.publish({
+      destination: "/pub/chat/message",
+      body: JSON.stringify({
+        roomId: room.id,
+        userId: userId,
+        sender: username,
+        content: message,
+        type: "CHAT",
+      }),
+    });
+  };
+
+  const enterMessage = () => {
+    if (room.isEnter === true) {
+      client.current.publish({
+        destination: "/pub/chat/room",
+        body: JSON.stringify({
+          roomId: room.id,
+          userId: userId,
+          sender: username,
+          content: username + "님이 들어왔습니다.",
+          type: "ENTER",
+        }),
+      });
+    }
   };
 
   return (
