@@ -21,6 +21,9 @@ export default function AddRoomPage() {
         name: title,
       })
       .then((response) => {
+        var rooms = JSON.parse(localStorage.getItem("rooms") || "[]");
+        rooms.push(response.data.roomId);
+        localStorage.setItem("rooms", JSON.stringify(rooms));
         navigate(`/chat/${response.data.roomId}`, {
           state: {
             id: response.data.roomId,
