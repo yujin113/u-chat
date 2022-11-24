@@ -6,6 +6,8 @@ import axios from "axios";
 type Room = {
   roomId: number;
   name: string;
+  recentChat: string;
+  recentDate: string;
 };
 
 export default function ChatroomPage() {
@@ -82,8 +84,12 @@ export default function ChatroomPage() {
                     to={`/enterRoom`}
                     state={{ name: room.name, id: room.roomId }}
                   >
-                    <li className="px-4 py-4 bg-white hover:bg-indigo-100 hover:text-indigo-900 border-b border-gray-200 cursor-pointer transition-all duration-300 ease-in-out">
+                    <li className="px-4 py-4 text-lg bg-white hover:bg-indigo-100 hover:text-indigo-900 border-b border-gray-200 cursor-pointer transition-all duration-300 ease-in-out">
                       {room.name}
+                      <div className="text-xs pt-1 text-gray-400 grid grid-cols-2 place_content_between">
+                        <div>{room.recentChat}</div>
+                        <div className="text-right pr-2">{room.recentDate}</div>
+                      </div>
                     </li>
                   </Link>
                 ) : (
@@ -94,8 +100,12 @@ export default function ChatroomPage() {
                       id: room.roomId,
                     }}
                   >
-                    <li className="px-4 py-4 bg-white hover:bg-indigo-100 hover:text-indigo-900 border-b border-gray-200 cursor-pointer transition-all duration-300 ease-in-out">
+                    <li className="px-4 py-4 text-lg bg-white hover:bg-indigo-100 hover:text-indigo-900 border-b border-gray-200 cursor-pointer transition-all duration-300 ease-in-out">
                       {room.name}
+                      <div className="text-xs pt-1 text-gray-400 grid grid-cols-2 place_content_between">
+                        <div>{room.recentChat}</div>
+                        <div className="text-right pr-2">{room.recentDate}</div>
+                      </div>
                     </li>
                   </Link>
                 )

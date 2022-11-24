@@ -6,6 +6,8 @@ import { UrlContext } from "../../App";
 type Room = {
   roomId: number;
   name: string;
+  recentChat: string;
+  recentDate: string;
 };
 
 export default function MyChatPage() {
@@ -20,8 +22,7 @@ export default function MyChatPage() {
   const baseUrl = useContext(UrlContext);
 
   const getMyRoom = () => {
-    axios.get(baseUrl + `/api/chatroom/myroom/${userId}`)
-    .then((response) => {
+    axios.get(baseUrl + `/api/chatroom/myroom/${userId}`).then((response) => {
       setRooms(response.data.data.rooms);
     });
   };
@@ -54,8 +55,12 @@ export default function MyChatPage() {
                 id: room.roomId,
               }}
             >
-              <li className="px-4 py-4 bg-white hover:bg-indigo-100 hover:text-indigo-900 border-b border-gray-200 cursor-pointer transition-all duration-300 ease-in-out">
+              <li className="px-4 py-4 text-lg bg-white hover:bg-indigo-100 hover:text-indigo-900 border-b border-gray-200 cursor-pointer transition-all duration-300 ease-in-out">
                 {room.name}
+                <div className="text-xs pt-1 text-gray-400 grid grid-cols-2 place_content_between">
+                  <div>{room.recentChat}</div>
+                  <div className="text-right pr-2">{room.recentDate}</div>
+                </div>
               </li>
             </Link>
           ))}
