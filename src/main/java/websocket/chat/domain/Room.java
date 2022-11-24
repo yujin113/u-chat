@@ -25,6 +25,7 @@ public class Room {
     @CreatedDate
     private LocalDateTime createdAt;
 
+    @CreatedDate
     private LocalDateTime recentChat;
 
     public static Room createRoom(String name) {

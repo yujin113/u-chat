@@ -14,7 +14,6 @@ import websocket.chat.repository.UserRepository;
 import websocket.chat.repository.UserRoomRepository;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 

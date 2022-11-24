@@ -35,7 +35,11 @@ public class RoomListResponseDto {
             this.roomId = room.getRoomId();
             this.name = room.getName();
             this.recentChat = recentChat;
-            this.recentDate = room.getRecentChat();
+            if (recentChat == null) {
+                this.recentDate = null;
+            } else {
+                this.recentDate = room.getRecentChat();
+            }
         }
     }
 }
