@@ -14,6 +14,7 @@ import websocket.chat.repository.RoomRepository;
 import websocket.chat.repository.UserRepository;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -44,6 +45,8 @@ public class MessageService {
 
         Message message = Message.createMessage(room, user, chatMessage.getContent(), Type.CHAT);
         messageRepository.save(message);
+
+        room.updateRecentChat(LocalDateTime.now());
 
         res.setCode(ResultCode.Success);
         return res;

@@ -23,6 +23,6 @@ public interface UserRoomRepository extends JpaRepository<UserRoom, Long> {
     @Query("select ur.room.roomId from UserRoom ur where ur.user=?1")
     List<Long> getMyRoomId(User user);
 
-    @Query("select ur.room from UserRoom ur where ur.user=?1 order by ur.userRoomId desc")
+    @Query("select ur.room from UserRoom ur where ur.user=?1 order by ur.room.recentChat desc")
     List<Room> getMyRoom(User user);
 }

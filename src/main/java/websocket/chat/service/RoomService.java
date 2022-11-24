@@ -14,6 +14,7 @@ import websocket.chat.repository.UserRepository;
 import websocket.chat.repository.UserRoomRepository;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,9 +51,19 @@ public class RoomService {
 
     public RoomListResponse getRoomList() {
         RoomListResponse res = new RoomListResponse();
-
-        List<RoomList> rooms = roomRepository.findAll().stream()
-                .map(RoomList::new)
+        List<RoomList> rooms = roomRepository.findAllOrderByRecentChat().stream()
+                .map(room -> {
+                    List<Message> message = messageRepository.findRecentMessage(room, PageRequest.of(0, 1));
+                    if (message.size() == 0 || room.getRecentChat() == null) {
+                        return new RoomList(room, null);
+                    } else {
+                        String content = message.get(0).getContent();
+                        if (content.length() > 40) {
+                            content = content.substring(0, 40) + "...";
+                        }
+                        return new RoomList(room, content);
+                    }
+                })
                 .collect(Collectors.toList());
         res.setData(RoomListResponseDto.of(rooms));
 
@@ -186,9 +197,24 @@ public class RoomService {
         }
         User user = userOptional.get();
 
-        List<RoomList> roomList = userRoomRepository.getMyRoom(user).stream().map(RoomList::new).collect(Collectors.toList());
+        List<RoomList> rooms = userRoomRepository.getMyRoom(user).stream()
+                .map(room -> {
+                    List<Message> message = messageRepository.findRecentMessage(room, PageRequest.of(0, 1));
+                    if (message.size() == 0 || room.getRecentChat() == null) {
+                        return new RoomList(room, null);
+                    } else {
+                        String content = message.get(0).getContent();
+                        if (content.length() > 40) {
+                            content = content.substring(0, 40) + "...";
+                        }
+                        return new RoomList(room, content);
+                    }
+                })
+                .collect(Collectors.toList());
 
-        res.setData(GetMyRoomResponseDto.of(roomList));
+//        List<RoomList> roomList = userRoomRepository.getMyRoom(user).stream().map(RoomList::new).collect(Collectors.toList());
+
+        res.setData(GetMyRoomResponseDto.of(rooms));
 
         res.setCode(ResultCode.Success);
         return res;

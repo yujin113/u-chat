@@ -25,9 +25,15 @@ public class Room {
     @CreatedDate
     private LocalDateTime createdAt;
 
+    private LocalDateTime recentChat;
+
     public static Room createRoom(String name) {
         Room room = new Room();
         room.name = name;
         return room;
+    }
+
+    public void updateRecentChat(LocalDateTime recentChat) {
+        this.recentChat = recentChat;
     }
 }

@@ -15,4 +15,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     @Query("select m from Message m where m.room=?1 and m.messageId > ?2")
     List<Message> findAllByRoom(Room room, Long chatKey);
+
+    @Query("select m from Message m where m.room=?1 and m.type='CHAT' order by m.createdAt desc")
+    List<Message> findRecentMessage(Room room, Pageable pageable);
 }
