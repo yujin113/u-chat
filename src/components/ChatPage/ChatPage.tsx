@@ -146,7 +146,6 @@ export default function ChatPage() {
     client.current.onConnect = () => {
       client.current.subscribe(`/sub/enter/${room.id}`, (msg) => {
         const newMsg = JSON.parse(msg.body);
-        console.log(newMsg);
 
         const newMessage: Message = {
           username: newMsg.sender,
@@ -208,6 +207,7 @@ export default function ChatPage() {
   }, []);
 
   const sendMessage = () => {
+    if (message == "") return;
     (document.getElementById("msg") as HTMLInputElement).value = "";
     client.current.publish({
       destination: "/pub/chat/message",
