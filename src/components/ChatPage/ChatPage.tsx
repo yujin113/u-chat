@@ -298,11 +298,11 @@ export default function ChatPage() {
                 <div className="grid grid-cols-12 gap-y-2" ref={scrollRef}>
                   {messages.map((message, index) =>
                     message.type == "ENTER" || message.type == "LEAVE" ? (
-                      <div className="col-start-6 col-end-13 p-3 rounded-lg">
+                      <div className="col-start-6 col-end-13 py-2 rounded-lg">
                         {message.content}
                       </div>
                     ) : message.sender == true ? (
-                      <div className="col-start-6 col-end-13 p-3 rounded-lg">
+                      <div className="col-start-6 col-end-13 px-3 pt-1 pb-5 rounded-lg">
                         <div className="flex items-center justify-start flex-row-reverse">
                           <div className="flex items-center justify-center h-10 w-10 rounded-full bg-blue-400 flex-shrink-0">
                             {message.username.substring(0, 1)}
@@ -316,7 +316,7 @@ export default function ChatPage() {
                         </div>
                       </div>
                     ) : (
-                      <div className="col-start-1 col-end-8 p-3 rounded-lg">
+                      <div className="col-start-1 col-end-8 px-3 pt-1 pb-5 rounded-lg">
                         <div className="flex flex-row items-center">
                           <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-400 flex-shrink-0">
                             {message.username.substring(0, 1)}
