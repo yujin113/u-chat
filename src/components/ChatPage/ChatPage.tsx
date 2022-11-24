@@ -55,16 +55,31 @@ export default function ChatPage() {
   };
 
   const leaveRoom = () => {
-    client.current.publish({
-      destination: "/pub/chat/room",
-      body: JSON.stringify({
-        roomId: room.id,
-        userId: userId,
-        sender: username,
-        content: username + "님이 나갔습니다.",
-        type: "LEAVE",
-      }),
-    });
+    if (userId == creatorId) {
+      const leave = window.confirm("방이 삭제됩니다. 나가시겠습니까?");
+      if (!leave) return;
+      client.current.publish({
+        destination: "/pub/chat/room",
+        body: JSON.stringify({
+          roomId: room.id,
+          userId: userId,
+          sender: username,
+          content: "방이 삭제되었습니다.",
+          type: "LEAVE",
+        }),
+      });
+    } else {
+      client.current.publish({
+        destination: "/pub/chat/room",
+        body: JSON.stringify({
+          roomId: room.id,
+          userId: userId,
+          sender: username,
+          content: username + "님이 나갔습니다.",
+          type: "LEAVE",
+        }),
+      });
+    }
 
     client.current.unsubscribe(`/sub/room/${room.id}`);
     client.current.unsubscribe(`/sub/enter/${room.id}`);
