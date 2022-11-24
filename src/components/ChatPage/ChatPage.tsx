@@ -19,9 +19,15 @@ type Message = {
   type: string;
 };
 
+interface User {
+  userId: number;
+  username: string;
+}
+
 export default function ChatPage() {
   const [count, setCount] = useState(0);
-  const [participants, setParticipants] = useState<string[]>([]);
+  const [creatorId, setCreatorId] = useState();
+  const [participants, setParticipants] = useState<User[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
 
   const userId = localStorage.getItem("userId");
@@ -43,11 +49,8 @@ export default function ChatPage() {
   const getRoomInfo = () => {
     axios.get(baseUrl + `/api/chatroom/info/${room.id}`).then((response) => {
       setCount(response.data.data.count);
-      const people: string[] = [];
-      response.data.data.users.map((user: string, index: number) => {
-        people.push(user);
-      });
-      setParticipants(people);
+      setCreatorId(response.data.data.creatorId);
+      setParticipants(response.data.data.users);
     });
   };
 
@@ -139,11 +142,17 @@ export default function ChatPage() {
         };
         setMessages((prevState) => [...prevState, newMessage]);
         if (newMsg.type == "ENTER") {
-          setParticipants((prevState) => [...prevState, newMsg.sender]);
+          setParticipants((prevState) => [
+            ...prevState,
+            { userId: newMsg.userId, username: newMsg.sender },
+          ]);
           setCount((count) => count + 1);
         } else {
           setParticipants((prevState) => {
-            const idx = prevState.indexOf(newMsg.sender);
+            const find = prevState.find(
+              (state) => state.userId == newMsg.userId
+            );
+            const idx = prevState.indexOf(find!);
             if (idx != -1) {
               prevState.splice(idx, 1);
             }
@@ -261,22 +270,22 @@ export default function ChatPage() {
             </div>
             <div className="flex flex-col space-y-1 mt-4 -mx-2 h-100 overflow-y-auto">
               {participants.map((participant, index) =>
-                index == 0 ? (
+                participant.userId == creatorId ? (
                   <div className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2">
                     <div className="flex items-center justify-center h-8 w-8 bg-orange-200 rounded-full">
-                      {participant.substring(0, 1)}
+                      {participant.username.substring(0, 1)}
                     </div>
                     <div className="ml-2 text-m font-semibold">
-                      {participant} (방장)
+                      {participant.username}
                     </div>
                   </div>
                 ) : (
                   <div className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2">
                     <div className="flex items-center justify-center h-8 w-8 bg-pink-200 rounded-full">
-                      {participant.substring(0, 1)}
+                      {participant.username.substring(0, 1)}
                     </div>
                     <div className="ml-2 text-m font-semibold">
-                      {participant}
+                      {participant.username}
                     </div>
                   </div>
                 )

@@ -8,9 +8,15 @@ type Room = {
   name: string;
 };
 
+interface User {
+  userId: number;
+  username: string;
+}
+
 export default function EnterRoomModal() {
   const [count, setCount] = useState(0);
-  const [participants, setParticipants] = useState<string[]>([]);
+  const [creatorId, setCreatorId] = useState();
+  const [participants, setParticipants] = useState<User[]>([]);
   const userId = localStorage.getItem("userId");
   const username = localStorage.getItem("username");
 
@@ -20,7 +26,6 @@ export default function EnterRoomModal() {
   const baseUrl = useContext(UrlContext);
   const navigate = useNavigate();
 
-  const [save, setSave] = useState(false);
   const enterRoom = async () => {
     await axios
       .post(baseUrl + `/api/chatroom/enter/${room.id}/${userId}`)
@@ -29,7 +34,6 @@ export default function EnterRoomModal() {
           var rooms = JSON.parse(localStorage.getItem("rooms") || "[]");
           rooms.push(room.id);
           localStorage.setItem("rooms", JSON.stringify(rooms));
-          setSave(true);
           navigate(`/chat/${room.id}`, {
             state: {
               id: room.id,
@@ -47,11 +51,8 @@ export default function EnterRoomModal() {
   const getRoomInfo = () => {
     axios.get(baseUrl + `/api/chatroom/info/${room.id}`).then((response) => {
       setCount(response.data.data.count);
-      const people: string[] = [];
-      response.data.data.users.map((user: string, index: number) => {
-        people.push(user);
-      });
-      setParticipants(people);
+      setCreatorId(response.data.data.creatorId);
+      setParticipants(response.data.data.users);
     });
   };
 
@@ -71,22 +72,22 @@ export default function EnterRoomModal() {
               </p>
               <div className="flex flex-col space-y-1 mt-4 -mx-2 h-100 overflow-y-auto">
                 {participants.map((participant, index) =>
-                  index == 0 ? (
+                  participant.userId == creatorId ? (
                     <div className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2">
                       <div className="flex items-center justify-center h-8 w-8 bg-orange-200 rounded-full">
-                        {participant.substring(0, 1)}
+                        {participant.username.substring(0, 1)}
                       </div>
                       <div className="ml-2 text-m font-semibold">
-                        {participant} (방장)
+                        {participant.username}
                       </div>
                     </div>
                   ) : (
                     <div className="flex flex-row items-center hover:bg-gray-100 rounded-xl p-2">
                       <div className="flex items-center justify-center h-8 w-8 bg-pink-200 rounded-full">
-                        {participant.substring(0, 1)}
+                        {participant.username.substring(0, 1)}
                       </div>
                       <div className="ml-2 text-m font-semibold">
-                        {participant}
+                        {participant.username}
                       </div>
                     </div>
                   )
