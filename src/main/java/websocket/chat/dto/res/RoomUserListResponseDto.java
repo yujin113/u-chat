@@ -8,15 +8,27 @@ import java.util.List;
 public class RoomUserListResponseDto {
     int count;
     Long creatorId;
-    List<String> users;
+    List<UserInfo> users;
 
-    private RoomUserListResponseDto(int count, Long creatorId, List<String> users) {
+    @Getter
+    public static class UserInfo {
+        Long userId;
+
+        String username;
+
+        public UserInfo(Long userId, String username) {
+            this.userId = userId;
+            this.username = username;
+        }
+    }
+
+    private RoomUserListResponseDto(int count, Long creatorId, List<UserInfo> users) {
         this.count = count;
         this.creatorId = creatorId;
         this.users = users;
     }
 
-    public static RoomUserListResponseDto of(int count, Long creatorId, List<String> users) {
+    public static RoomUserListResponseDto of(int count, Long creatorId, List<UserInfo> users) {
         return new RoomUserListResponseDto(count, creatorId, users);
     }
 }

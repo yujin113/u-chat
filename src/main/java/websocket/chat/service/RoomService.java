@@ -79,11 +79,20 @@ public class RoomService {
             return res;
         }
         Room room = roomOptional.get();
-        List<String> userList = userRoomRepository.getListRoomUser(room);
-
+        List<User> userList = userRoomRepository.getListRoomUser(room);
         Long creatorId = userRoomRepository.findCreatorId(room);
+        List<RoomUserListResponseDto.UserInfo> userInfoList = userRoomRepository.getListRoomUser(room).stream()
+                .map(user -> {
+                    String username = user.getUsername();
+                    if (Objects.equals(user.getUserId(), creatorId)) {
+                        username += " (방장)";
+                    }
+                    return new RoomUserListResponseDto.UserInfo(user.getUserId(), username);
+                })
+                .collect(Collectors.toList());
 
-        res.setData(RoomUserListResponseDto.of(userList.size(), creatorId, userList));
+
+        res.setData(RoomUserListResponseDto.of(userList.size(), creatorId, userInfoList));
         res.setCode(ResultCode.Success);
         return res;
     }
