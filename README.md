@@ -1,7 +1,10 @@
 <h1 align="middle">유챗</h1>
 <p align="middle">누구나 참여할 수 있는 다대다 웹 채팅 서비스</p>
+<img src="https://user-images.githubusercontent.com/73515587/209417210-0ee889a8-2e48-42d5-8595-078f346475dd.gif">
+<br>
 
 ## 💬 서비스 소개
+
 <img width="1829" alt="유챗 screenshot" src="https://user-images.githubusercontent.com/73515587/205440390-cd4998e0-a0c4-4746-a749-c1f605bbdd9a.png" >
 
 랜딩 페이지입니다. 채팅방 전체 목록이 보이고, 가장 최근 메시지 내용과 전송 시간 정보를 함께 조회할 수 있습니다. 채팅방 목록은 가장 최근에 전송된 메시지가 있는 채팅방 순으로 내림차순 조회됩니다. 상단 메뉴바에서 My Chat을 클릭하면 내가 속한 채팅방만 모아볼 수 있습니다.
